@@ -1,11 +1,16 @@
 .app {
-    .link {
-        cursor: pointer;
-        font-size: 16px;
-        text-decoration: none;
+  .link {
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+    &.active {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-thickness: 2px;
     }
+  }
 
-    .link + .link {
-        margin-left: 10px;
-    }
+  .link + .link {
+    margin-left: 10px;
+  }
 }
