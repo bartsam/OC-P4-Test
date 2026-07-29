@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SessionInformation } from 'src/app/core/models/sessionInformation.interface';
 import { Teacher } from 'src/app/core/models/teacher.interface';
@@ -16,7 +16,7 @@ import { MaterialModule } from '../../../../shared/material.module';
 
 @Component({
   selector: 'app-form',
-  imports: [CommonModule, MaterialModule, FlexLayoutModule],
+  imports: [CommonModule, MaterialModule, FlexLayoutModule, RouterModule],
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.scss'],
 })
