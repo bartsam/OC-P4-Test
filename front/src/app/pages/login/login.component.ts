@@ -1,17 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/module.d-CnjH8Dlt';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SessionInformation } from 'src/app/core/models/sessionInformation.interface';
-import { SessionService } from 'src/app/core/service/session.service';
 import {
   LoginForm,
   LoginRequest,
 } from '../../core/models/loginRequest.interface';
+import { SessionInformation } from '../../core/models/sessionInformation.interface';
 import { AuthService } from '../../core/service/auth.service';
+import { SessionService } from '../../core/service/session.service';
 import { MaterialModule } from '../../shared/material.module';
 
 @Component({
