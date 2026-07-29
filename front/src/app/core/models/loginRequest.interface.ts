@@ -1,4 +1,10 @@
+import { FormControl } from '@angular/forms';
+
 export interface LoginRequest {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
+
+export type LoginForm = {
+  [K in keyof LoginRequest]: FormControl<LoginRequest[K]>;
+};
