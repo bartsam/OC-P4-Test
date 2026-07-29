@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { User } from '../../core/models/user.interface';
@@ -10,7 +11,7 @@ import { MaterialModule } from '../../shared/material.module';
 
 @Component({
   selector: 'app-me',
-  imports: [CommonModule, MaterialModule],
+  imports: [CommonModule, MaterialModule, FlexLayoutModule],
   templateUrl: './me.component.html',
   styleUrls: ['./me.component.scss'],
 })

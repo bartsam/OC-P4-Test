@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-// import { FormBuilder } from '@angular/forms';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap, tap } from 'rxjs';
@@ -14,7 +14,7 @@ import { MaterialModule } from '../../../../shared/material.module';
 
 @Component({
   selector: 'app-detail',
-  imports: [CommonModule, MaterialModule],
+  imports: [CommonModule, MaterialModule, FlexLayoutModule],
   templateUrl: './detail.component.html',
   styleUrls: ['./detail.component.scss'],
 })
@@ -27,7 +27,6 @@ export class DetailComponent implements OnInit {
   public userId: string;
 
   private route = inject(ActivatedRoute);
-  // private fb = inject(FormBuilder);
   private sessionService = inject(SessionService);
   private sessionApiService = inject(SessionApiService);
   private teacherService = inject(TeacherService);

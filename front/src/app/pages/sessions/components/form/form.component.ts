@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,7 +16,7 @@ import { MaterialModule } from '../../../../shared/material.module';
 
 @Component({
   selector: 'app-form',
-  imports: [CommonModule, MaterialModule],
+  imports: [CommonModule, MaterialModule, FlexLayoutModule],
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.scss'],
 })
