@@ -25,6 +25,7 @@ describe('SessionsAPIService', () => {
     users: [],
   };
   const mockSessions: Session[] = [mockSession];
+  const mockBody = mockSession;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -38,12 +39,19 @@ describe('SessionsAPIService', () => {
     httpMock.verify();
   });
 
-  function expectHttpRequest(
-    observable: Observable<Session[] | Session | void>,
-    url: string,
-    method: string,
-    mockResponse: Session[] | Session | null,
-  ): void {
+  function expectHttpRequest({
+    observable,
+    url,
+    method,
+    mockResponse,
+    body = null,
+  }: {
+    observable: Observable<Session[] | Session | void>;
+    url: string;
+    method: string;
+    mockResponse: Session[] | Session | null;
+    body?: Session | null;
+  }): void {
     let result: unknown;
 
     observable.subscribe((response) => {
@@ -52,6 +60,7 @@ describe('SessionsAPIService', () => {
 
     const req = httpMock.expectOne(url);
     expect(req.request.method).toBe(method);
+    expect(req.request.body).toEqual(body);
     req.flush(mockResponse);
 
     expect(result).toEqual(mockResponse);
@@ -62,60 +71,72 @@ describe('SessionsAPIService', () => {
   });
 
   it('should get ALL sessions', () => {
-    expectHttpRequest(service.all(), 'api/session', 'GET', mockSessions);
+    expectHttpRequest({
+      observable: service.all(),
+      url: 'api/session',
+      method: 'GET',
+      body: null,
+      mockResponse: mockSessions,
+    });
   });
 
   it('should get session DETAIL', () => {
-    expectHttpRequest(
-      service.detail(mockSessionId),
-      `api/session/${mockSessionId}`,
-      'GET',
-      mockSession,
-    );
+    expectHttpRequest({
+      observable: service.detail(mockSessionId),
+      url: `api/session/${mockSessionId}`,
+      method: 'GET',
+      body: null,
+      mockResponse: mockSession,
+    });
   });
 
   it('should DELETE session', () => {
-    expectHttpRequest(
-      service.delete(mockSessionId),
-      `api/session/${mockSessionId}`,
-      'DELETE',
-      null,
-    );
+    expectHttpRequest({
+      observable: service.delete(mockSessionId),
+      url: `api/session/${mockSessionId}`,
+      method: 'DELETE',
+      body: null,
+      mockResponse: null,
+    });
   });
 
   it('should CREATE session', () => {
-    expectHttpRequest(
-      service.create(mockSession),
-      'api/session',
-      'POST',
-      mockSession,
-    );
+    expectHttpRequest({
+      observable: service.create(mockSession),
+      url: 'api/session',
+      method: 'POST',
+      body: mockBody,
+      mockResponse: mockSession,
+    });
   });
 
   it('should UPDATE session', () => {
-    expectHttpRequest(
-      service.update(mockSessionId, mockSession),
-      `api/session/${mockSessionId}`,
-      'PUT',
-      mockSession,
-    );
+    expectHttpRequest({
+      observable: service.update(mockSessionId, mockSession),
+      url: `api/session/${mockSessionId}`,
+      method: 'PUT',
+      body: mockBody,
+      mockResponse: mockSession,
+    });
   });
 
   it('should PARTICIPATE to a session', () => {
-    expectHttpRequest(
-      service.participate(mockSessionId, mockUserId),
-      `api/session/${mockSessionId}/participate/${mockUserId}`,
-      'POST',
-      null,
-    );
+    expectHttpRequest({
+      observable: service.participate(mockSessionId, mockUserId),
+      url: `api/session/${mockSessionId}/participate/${mockUserId}`,
+      method: 'POST',
+      body: null,
+      mockResponse: null,
+    });
   });
 
   it('should UNPARTICIPATE to a session', () => {
-    expectHttpRequest(
-      service.unParticipate(mockSessionId, mockUserId),
-      `api/session/${mockSessionId}/participate/${mockUserId}`,
-      'DELETE',
-      null,
-    );
+    expectHttpRequest({
+      observable: service.unParticipate(mockSessionId, mockUserId),
+      url: `api/session/${mockSessionId}/participate/${mockUserId}`,
+      method: 'DELETE',
+      body: null,
+      mockResponse: null,
+    });
   });
 });
