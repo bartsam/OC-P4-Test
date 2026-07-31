@@ -41,25 +41,25 @@ describe('TeacherService', () => {
   });
 
   it('should get ALL teachers', async () => {
-    const resultPromise = firstValueFrom(service.all());
+    const resPromise = firstValueFrom(service.all());
     const request = httpMock.expectOne(pathService);
 
     expect(request.request.method).toBe('GET');
     request.flush(mockTeachers);
 
-    const result = await resultPromise;
+    const result = await resPromise;
     expect(result).toEqual(mockTeachers);
   });
 
   it('should get teacher DETAIL', async () => {
     const teacherId = '1';
-    const resultPromise = firstValueFrom(service.detail(teacherId));
-    const request = httpMock.expectOne(`${pathService}/${teacherId}`);
+    const resPromise = firstValueFrom(service.detail(teacherId));
+    const req = httpMock.expectOne(`${pathService}/${teacherId}`);
 
-    expect(request.request.method).toBe('GET');
-    request.flush(mockTeacher);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockTeacher);
 
-    const result = await resultPromise;
+    const result = await resPromise;
     expect(result).toEqual(mockTeacher);
   });
 });
