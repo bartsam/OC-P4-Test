@@ -8,8 +8,8 @@ import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { expect } from '@jest/globals';
-import { SessionService } from 'src/app/core/service/session.service';
 
+import { SessionService } from '../../core/service/session.service';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
@@ -18,9 +18,9 @@ describe('LoginComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [LoginComponent],
       providers: [SessionService],
       imports: [
+        LoginComponent,
         RouterTestingModule,
         BrowserAnimationsModule,
         HttpClientModule,
@@ -28,9 +28,9 @@ describe('LoginComponent', () => {
         MatIconModule,
         MatFormFieldModule,
         MatInputModule,
-        ReactiveFormsModule]
-    })
-      .compileComponents();
+        ReactiveFormsModule,
+      ],
+    }).compileComponents();
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

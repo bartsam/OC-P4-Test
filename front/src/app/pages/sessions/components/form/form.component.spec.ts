@@ -1,6 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import {  ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,9 +10,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { expect } from '@jest/globals';
-import { SessionService } from 'src/app/core/service/session.service';
-import { SessionApiService } from '../../../../core/service/session-api.service';
 
+import { SessionApiService } from '../../../../core/service/session-api.service';
+import { SessionService } from '../../../../core/service/session.service';
 import { FormComponent } from './form.component';
 
 describe('FormComponent', () => {
@@ -21,14 +21,14 @@ describe('FormComponent', () => {
 
   const mockSessionService = {
     sessionInformation: {
-      admin: true
-    }
-  }
+      admin: true,
+    },
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-
       imports: [
+        FormComponent,
         RouterTestingModule,
         HttpClientModule,
         MatCardModule,
@@ -38,15 +38,13 @@ describe('FormComponent', () => {
         ReactiveFormsModule,
         MatSnackBarModule,
         MatSelectModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
       ],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
-        SessionApiService
+        SessionApiService,
       ],
-      declarations: [FormComponent]
-    })
-      .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(FormComponent);
     component = fixture.componentInstance;
