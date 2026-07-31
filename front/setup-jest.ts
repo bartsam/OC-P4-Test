@@ -27,5 +27,11 @@ Object.defineProperty(document.body.style, 'transform', {
   },
 });
 
+Object.defineProperty(window, 'getComputedStyle', {
+  value: () => ({
+    getPropertyValue: () => '',
+  }),
+});
+
 /* output shorter and more meaningful Zone error stack traces */
 // Error.stackTraceLimit = 2;
