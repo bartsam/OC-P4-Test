@@ -6,6 +6,7 @@ import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
+import { SessionInformation } from '../../core/models/sessionInformation.interface';
 import { User } from '../../core/models/user.interface';
 import { SessionService } from '../../core/service/session.service';
 import { UserService } from '../../core/service/user.service';
@@ -17,7 +18,11 @@ describe('MeComponent', () => {
   let debugElement: DebugElement;
   let router: Router;
 
-  const mockSessionService = {
+  type MockSessionService = Pick<SessionService, 'logOut'> & {
+    sessionInformation: Partial<SessionInformation>;
+  };
+
+  const mockSessionService: MockSessionService = {
     sessionInformation: {
       admin: false,
       id: 1,
@@ -25,12 +30,13 @@ describe('MeComponent', () => {
     logOut: jest.fn(),
   };
 
-  const mockUserService = {
-    getById: jest.fn(),
-    delete: jest.fn(),
-  };
+  const mockUserService: jest.Mocked<Pick<UserService, 'delete' | 'getById'>> =
+    {
+      getById: jest.fn(),
+      delete: jest.fn(),
+    };
 
-  const mockMatSnackBar = {
+  const mockMatSnackBar: jest.Mocked<Pick<MatSnackBar, 'open'>> = {
     open: jest.fn(),
   };
 
@@ -73,7 +79,7 @@ describe('MeComponent', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('should create', () => {

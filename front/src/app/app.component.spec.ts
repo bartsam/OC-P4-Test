@@ -18,8 +18,9 @@ describe('AppComponent', () => {
   let debugElement: DebugElement;
   let router: Router;
 
-  // Objet simple qui imite l'interface de SessionService avec fonction mock jest.fn()
-  const mockSessionService = {
+  const mockSessionService: jest.Mocked<
+    Pick<SessionService, '$isLogged' | 'logOut'>
+  > = {
     $isLogged: jest.fn(),
     logOut: jest.fn(),
   };
@@ -45,7 +46,7 @@ describe('AppComponent', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('should create the app', () => {
