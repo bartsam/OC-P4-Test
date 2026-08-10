@@ -11,7 +11,12 @@
           </div>
           <div>
             @if (isAdmin) {
-              <button mat-raised-button color="warn" (click)="delete()">
+              <button
+                mat-raised-button
+                color="warn"
+                (click)="delete()"
+                data-testid="delete-button"
+              >
                 <mat-icon>delete</mat-icon>
                 <span class="ml1">Delete</span>
               </button>
@@ -22,6 +27,7 @@
                     mat-raised-button
                     color="warn"
                     (click)="unParticipate()"
+                    data-testid="unparticipate-button"
                   >
                     <mat-icon>person_remove</mat-icon>
                     <span class="ml1">Do not participate</span>
@@ -31,6 +37,7 @@
                     mat-raised-button
                     color="primary"
                     (click)="participate()"
+                    data-testid="participate-button"
                   >
                     <mat-icon>person_add</mat-icon>
                     <span class="ml1">Participate</span>

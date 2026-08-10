@@ -47,8 +47,8 @@ describe('MeComponent', () => {
     firstName: 'John',
     admin: false,
     password: 'azerty',
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-06-01'),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const mockAdminUser: User = {
