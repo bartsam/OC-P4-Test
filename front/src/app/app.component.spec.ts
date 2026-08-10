@@ -1,5 +1,3 @@
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { provideRouter, Router } from '@angular/router';
@@ -29,8 +27,6 @@ describe('AppComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent, MatToolbarModule],
       providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
         provideRouter([]),
         { provide: SessionService, useValue: mockSessionService },
       ],
