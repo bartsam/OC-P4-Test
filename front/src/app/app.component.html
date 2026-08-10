@@ -7,20 +7,40 @@
     <span>Yoga app</span>
     <div>
       @if ($isLogged() | async) {
-        <span routerLink="sessions" routerLinkActive="active" class="link"
+        <span
+          routerLink="sessions"
+          routerLinkActive="active"
+          class="link"
+          data-testid="sessions-link"
           >Sessions</span
         >
-        <span routerLink="me" routerLinkActive="active" class="link"
+        <span
+          routerLink="me"
+          routerLinkActive="active"
+          class="link"
+          data-testid="account-link"
           >Account</span
         >
-        <span (click)="logout()" routerLinkActive="active" class="link"
+        <span
+          (click)="logout()"
+          routerLinkActive="active"
+          class="link"
+          data-testid="logout-link"
           >Logout</span
         >
       } @else {
-        <span routerLink="/login" routerLinkActive="active" class="link"
+        <span
+          routerLink="/login"
+          routerLinkActive="active"
+          class="link"
+          data-testid="login-link"
           >Login</span
         >
-        <span routerLink="/register" routerLinkActive="active" class="link"
+        <span
+          routerLink="/register"
+          routerLinkActive="active"
+          class="link"
+          data-testid="register-link"
           >Register</span
         >
       }
