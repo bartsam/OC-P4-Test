@@ -47,7 +47,9 @@
           Submit
         </button>
         @if (onError) {
-          <span class="error ml2">An error occurred</span>
+          <span class="error ml2" data-testid="error-message"
+            >An error occurred</span
+          >
         }
       </mat-card-actions>
     </form>
