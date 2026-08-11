@@ -69,6 +69,8 @@ describe('AuthService', () => {
     });
 
     const req = httpMock.expectOne('/api/auth/login');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(loginRequest);
     req.flush(mockSessionInformation);
 
     expect(result).toEqual(mockSessionInformation);
