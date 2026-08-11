@@ -1,62 +1,43 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { expect, jest } from '@jest/globals';
-import { SessionService } from '../../../../core/service/session.service';
-
 import { DebugElement } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import {
   ActivatedRoute,
   convertToParamMap,
   provideRouter,
-  Router,
 } from '@angular/router';
+import { expect, jest } from '@jest/globals';
 import { of } from 'rxjs';
 import { Session } from '../../../../core/models/session.interface';
 import { Teacher } from '../../../../core/models/teacher.interface';
 import { SessionApiService } from '../../../../core/service/session-api.service';
+import { SessionService } from '../../../../core/service/session.service';
 import { TeacherService } from '../../../../core/service/teacher.service';
 import { DetailComponent } from './detail.component';
 
-describe('DetailComponent', () => {
+describe('DetailComponent Unit tests', () => {
   let component: DetailComponent;
   let fixture: ComponentFixture<DetailComponent>;
   let debugElement: DebugElement;
-  let router: Router;
 
   const mockSessionService = {
     sessionInformation: {
-      admin: true,
+      admin: false,
       id: 1,
     },
   };
 
-  const mockSessionApiService: jest.Mocked<
-    Pick<
-      SessionApiService,
-      'detail' | 'delete' | 'participate' | 'unParticipate'
-    >
-  > = {
-    delete: jest.fn<SessionApiService['delete']>(),
-    detail: jest.fn<SessionApiService['detail']>(),
-    participate: jest.fn<SessionApiService['participate']>(),
-    unParticipate: jest.fn<SessionApiService['unParticipate']>(),
-  };
+  const mockSessionApiService: jest.Mocked<Pick<SessionApiService, 'detail'>> =
+    {
+      detail: jest.fn<SessionApiService['detail']>(),
+    };
 
   const mockTeacherService: jest.Mocked<Pick<TeacherService, 'detail'>> = {
     detail: jest.fn<TeacherService['detail']>(),
   };
 
-  const mockMatSnackBar: jest.Mocked<Pick<MatSnackBar, 'open'>> = {
-    open: jest.fn<MatSnackBar['open']>(),
-  };
-
-  const mockUserId = 1;
-
-  const mockSessionId = 1;
-
   const mockTeacher: Teacher = {
-    id: mockUserId,
+    id: 1,
     firstName: 'John',
     lastName: 'Doe',
     createdAt: new Date(),
@@ -64,7 +45,7 @@ describe('DetailComponent', () => {
   };
 
   const mockSession: Session = {
-    id: mockSessionId,
+    id: 1,
     name: 'New session',
     description: 'A great session',
     date: new Date(),
@@ -91,13 +72,11 @@ describe('DetailComponent', () => {
           },
         },
       ],
-    })
-      .overrideProvider(MatSnackBar, { useValue: mockMatSnackBar })
-      .compileComponents();
+    }).compileComponents();
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   function createComponentWithSession(
@@ -111,126 +90,55 @@ describe('DetailComponent', () => {
     fixture = TestBed.createComponent(DetailComponent);
     component = fixture.componentInstance;
     debugElement = fixture.debugElement;
-    router = TestBed.inject(Router);
-
-    jest.spyOn(router, 'navigate').mockResolvedValue(true);
     fixture.detectChanges();
   }
 
-  it('should create', () => {
+  it('should create the component', () => {
     createComponentWithSession(false, mockSession);
     expect(component).toBeTruthy();
   });
 
-  describe('when the user is admin', () => {
-    beforeEach(() => createComponentWithSession(true, mockSession));
+  it('should display Delete button and hide participation buttons when user is admin', () => {
+    createComponentWithSession(true, mockSession);
 
-    it('should show the Delete button and hide the participate buttons', () => {
-      expect(
-        debugElement.query(By.css('[data-testid="delete-button"]')),
-      ).toBeTruthy();
-      expect(
-        debugElement.query(By.css('[data-testid="participate-button"]')),
-      ).toBeFalsy();
-      expect(
-        debugElement.query(By.css('[data-testid="unparticipate-button"]')),
-      ).toBeFalsy();
-    });
-
-    it('should delete the session, notify and navigate to sessions on click on Delete', () => {
-      mockSessionApiService.delete.mockReturnValue(of(undefined));
-      const deleteButton = debugElement.query(
-        By.css('[data-testid="delete-button"]'),
-      );
-
-      deleteButton.nativeElement.click();
-
-      expect(mockSessionApiService.delete).toHaveBeenCalledWith(
-        String(mockSessionId),
-      );
-      expect(mockMatSnackBar.open).toHaveBeenCalledWith(
-        'Session deleted !',
-        'Close',
-        {
-          duration: 3000,
-        },
-      );
-      expect(router.navigate).toHaveBeenCalledWith(['sessions']);
-    });
+    expect(
+      debugElement.query(By.css('[data-testid="delete-button"]')),
+    ).toBeTruthy();
+    expect(
+      debugElement.query(By.css('[data-testid="participate-button"]')),
+    ).toBeFalsy();
+    expect(
+      debugElement.query(By.css('[data-testid="unparticipate-button"]')),
+    ).toBeFalsy();
   });
 
-  describe('when the user is not participating', () => {
-    beforeEach(() => {
-      const sessionWithUsers = { ...mockSession, users: [2, 3] };
-      createComponentWithSession(false, sessionWithUsers);
-    });
+  it('should display Participate button only when user is not participating', () => {
+    const sessionWithoutUser = { ...mockSession, users: [2, 3] };
+    createComponentWithSession(false, sessionWithoutUser);
 
-    it('should show the Participate button only', () => {
-      expect(
-        debugElement.query(By.css('[data-testid="participate-button"]')),
-      ).toBeTruthy();
-      expect(
-        debugElement.query(By.css('[data-testid="unparticipate-button"]')),
-      ).toBeFalsy();
-      expect(
-        debugElement.query(By.css('[data-testid="delete-button"]')),
-      ).toBeFalsy();
-    });
-
-    it('should call participate() and refresh the session when clicking on Participate', () => {
-      const sessionWithCurrentUser = { ...mockSession, users: [1, 2, 3] };
-      mockSessionApiService.participate.mockReturnValue(of(undefined));
-      mockSessionApiService.detail.mockReturnValue(of(sessionWithCurrentUser));
-
-      const participateButton = debugElement.query(
-        By.css('[data-testid="participate-button"]'),
-      );
-      participateButton.nativeElement.click();
-      fixture.detectChanges();
-
-      expect(mockSessionApiService.participate).toHaveBeenCalledWith(
-        String(mockSessionId),
-        String(mockUserId),
-      );
-      expect(component.session).toEqual(sessionWithCurrentUser);
-      expect(component.isParticipate).toBe(true);
-    });
+    expect(
+      debugElement.query(By.css('[data-testid="participate-button"]')),
+    ).toBeTruthy();
+    expect(
+      debugElement.query(By.css('[data-testid="unparticipate-button"]')),
+    ).toBeFalsy();
+    expect(
+      debugElement.query(By.css('[data-testid="delete-button"]')),
+    ).toBeFalsy();
   });
 
-  describe('when the user is participating', () => {
-    beforeEach(() => {
-      const sessionWithUsers = { ...mockSession, users: [1, 2, 3] };
-      createComponentWithSession(false, sessionWithUsers);
-    });
+  it('should display "Do not participate" button only when user is participating', () => {
+    const sessionWithUser = { ...mockSession, users: [1, 2, 3] };
+    createComponentWithSession(false, sessionWithUser);
 
-    it('should show the "Do not participate" button only', () => {
-      expect(
-        debugElement.query(By.css('[data-testid="unparticipate-button"]')),
-      ).toBeTruthy();
-      expect(
-        debugElement.query(By.css('[data-testid="participate-button"]')),
-      ).toBeFalsy();
-    });
-
-    it('should call unParticipate() and refresh the session when clicking "Do not participate"', () => {
-      const sessionWithoutCurrentUser = { ...mockSession, users: [2, 3] };
-      mockSessionApiService.unParticipate.mockReturnValue(of(undefined));
-      mockSessionApiService.detail.mockReturnValue(
-        of(sessionWithoutCurrentUser),
-      );
-
-      const button = debugElement.query(
-        By.css('[data-testid="unparticipate-button"]'),
-      );
-      button.nativeElement.click();
-      fixture.detectChanges();
-
-      expect(mockSessionApiService.unParticipate).toHaveBeenCalledWith(
-        String(mockSessionId),
-        String(mockUserId),
-      );
-      expect(component.session).toEqual(sessionWithoutCurrentUser);
-      expect(component.isParticipate).toBe(false);
-    });
+    expect(
+      debugElement.query(By.css('[data-testid="unparticipate-button"]')),
+    ).toBeTruthy();
+    expect(
+      debugElement.query(By.css('[data-testid="participate-button"]')),
+    ).toBeFalsy();
+    expect(
+      debugElement.query(By.css('[data-testid="delete-button"]')),
+    ).toBeFalsy();
   });
 });
