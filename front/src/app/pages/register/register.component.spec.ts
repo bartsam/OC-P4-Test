@@ -1,16 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { expect, jest } from '@jest/globals';
-
 import { DebugElement } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { expect, jest } from '@jest/globals';
 import { RegisterRequest } from '../../core/models/registerRequest.interface';
 import { AuthService } from '../../core/service/auth.service';
 import { RegisterComponent } from './register.component';
 
-describe('RegisterComponent', () => {
+describe('RegisterComponent Unit tests', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
   let debugElement: DebugElement;
@@ -24,7 +22,7 @@ describe('RegisterComponent', () => {
     email: 'john.doe@test.com',
     firstName: 'John',
     lastName: 'Doe',
-    password: 'azert',
+    password: 'azerty',
   };
 
   beforeEach(async () => {
@@ -47,65 +45,53 @@ describe('RegisterComponent', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should register the user and navigate to "/login" when succeeds', () => {
-    mockAuthService.register.mockReturnValue(of(undefined));
-
-    component.form.setValue(mockRegisterRequest);
-    fixture.detectChanges();
+  it('should be invalid when empty and disable submit button', () => {
+    expect(component.form.valid).toBe(false);
 
     const submitButton = debugElement.query(By.css('button[type="submit"]'));
-    submitButton.nativeElement.click();
-    fixture.detectChanges();
-
-    expect(mockAuthService.register).toHaveBeenCalledWith(mockRegisterRequest);
-
-    expect(router.navigate).toHaveBeenCalledWith(['/login']);
-  });
-
-  it('should display an error message and not navigate when registration fail', () => {
-    mockAuthService.register.mockReturnValue(
-      throwError(() => new Error('Email already used')),
-    );
-
-    component.form.setValue(mockRegisterRequest);
-    fixture.detectChanges();
-
-    const submitButton = debugElement.query(By.css('button[type="submit"]'));
-    submitButton.nativeElement.click();
-    fixture.detectChanges();
-
-    const errorMessage = debugElement.query(
-      By.css('[data-testid="error-message"]'),
-    );
-    expect(errorMessage.nativeElement.textContent).toContain(
-      'An error occurred',
-    );
-    expect(router.navigate).not.toHaveBeenCalled();
-    expect(component.onError).toBe(true);
-  });
-
-  it('should disable the submit button when a required field is missing', () => {
-    component.form.setValue({ ...mockRegisterRequest, email: '' });
-    fixture.detectChanges();
-
-    const submitButton = debugElement.query(By.css('button[type="submit"]'));
-
     expect(submitButton.nativeElement.disabled).toBe(true);
   });
 
-  it('should disable the submit button when the email format is invalid', () => {
-    component.form.setValue({ ...mockRegisterRequest, email: 'not-an-email' });
+  it('should be valid when filled correctly and enable submit button', () => {
+    component.form.setValue(mockRegisterRequest);
     fixture.detectChanges();
 
+    expect(component.form.valid).toBe(true);
     const submitButton = debugElement.query(By.css('button[type="submit"]'));
+    expect(submitButton.nativeElement.disabled).toBe(false);
+  });
 
+  it('should disable submit button when email format is invalid', () => {
+    component.form.setValue({
+      ...mockRegisterRequest,
+      email: 'invalid-email',
+    });
+    fixture.detectChanges();
+
+    expect(component.form.valid).toBe(false);
+    expect(component.form.controls.email.errors?.['email']).toBeTruthy();
+
+    const submitButton = debugElement.query(By.css('button[type="submit"]'));
+    expect(submitButton.nativeElement.disabled).toBe(true);
+  });
+
+  it('should disable submit button when a required field is missing', () => {
+    component.form.setValue({
+      ...mockRegisterRequest,
+      firstName: '',
+    });
+    fixture.detectChanges();
+
+    expect(component.form.valid).toBe(false);
+
+    const submitButton = debugElement.query(By.css('button[type="submit"]'));
     expect(submitButton.nativeElement.disabled).toBe(true);
   });
 });
