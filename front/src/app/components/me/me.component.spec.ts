@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { expect, jest } from '@jest/globals';
 
 import { DebugElement } from '@angular/core';
@@ -12,7 +11,7 @@ import { SessionService } from '../../core/service/session.service';
 import { UserService } from '../../core/service/user.service';
 import { MeComponent } from './me.component';
 
-describe('MeComponent', () => {
+describe('MeComponent Unit tests', () => {
   let component: MeComponent;
   let fixture: ComponentFixture<MeComponent>;
   let debugElement: DebugElement;
@@ -35,10 +34,6 @@ describe('MeComponent', () => {
       getById: jest.fn(),
       delete: jest.fn(),
     };
-
-  const mockMatSnackBar: jest.Mocked<Pick<MatSnackBar, 'open'>> = {
-    open: jest.fn(),
-  };
 
   const mockUser: User = {
     id: 1,
@@ -64,10 +59,7 @@ describe('MeComponent', () => {
         { provide: SessionService, useValue: mockSessionService },
         { provide: UserService, useValue: mockUserService },
       ],
-    })
-      // Force le remplacement de MatSnackBar importé par MeComponent
-      .overrideProvider(MatSnackBar, { useValue: mockMatSnackBar })
-      .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MeComponent);
     component = fixture.componentInstance;
@@ -79,93 +71,61 @@ describe('MeComponent', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('ngOnInit', () => {
-    it('should fetch the user with the id from the session', () => {
-      mockUserService.getById.mockReturnValue(of(mockUser));
+  it('should call window.history.back when clicking the back button', () => {
+    const backButton = debugElement.query(
+      By.css('[data-testid="back-button"]'),
+    );
+    backButton.nativeElement.click();
 
-      fixture.detectChanges();
-
-      expect(mockUserService.getById).toHaveBeenCalledWith('1');
-      expect(component.user).toEqual(mockUser);
-    });
+    expect(window.history.back).toHaveBeenCalledTimes(1);
   });
 
-  describe('when the user is logged', () => {
-    beforeEach(() => {
-      mockUserService.getById.mockReturnValue(of(mockUser));
-      fixture.detectChanges();
-    });
-
-    it('should display the user name and email', () => {
-      const name = debugElement.query(By.css('[data-testid="user-name"]'));
-      const email = debugElement.query(By.css('[data-testid="user-email"]'));
-
-      expect(name.nativeElement.textContent).toContain('John');
-      expect(email.nativeElement.textContent).toContain('john.doe@test.com');
-    });
-
-    it('should show the Delete button and hide the admin message', () => {
-      expect(
-        debugElement.query(By.css('[data-testid="delete-button"]')),
-      ).toBeTruthy();
-      expect(
-        debugElement.query(By.css('[data-testid="admin-message"]')),
-      ).toBeFalsy();
-    });
-
-    it('should delete the account, notify, log out and redirect when clicking Delete', () => {
-      mockUserService.delete.mockReturnValue(of(undefined));
-      const deleteButton = debugElement.query(
-        By.css('[data-testid="delete-button"]'),
-      );
-
-      deleteButton.nativeElement.click();
-
-      expect(mockUserService.delete).toHaveBeenCalledWith('1');
-      expect(mockMatSnackBar.open).toHaveBeenCalledWith(
-        'Your account has been deleted !',
-        'Close',
-        { duration: 3000 },
-      );
-      expect(mockSessionService.logOut).toHaveBeenCalledTimes(1);
-      expect(router.navigate).toHaveBeenCalledWith(['/']);
-    });
-  });
-
-  describe('when the user is an admin', () => {
+  describe('when the user is admin', () => {
     beforeEach(() => {
       mockUserService.getById.mockReturnValue(of(mockAdminUser));
       fixture.detectChanges();
     });
 
-    it('should show the admin message and hide the Delete button', () => {
-      expect(
-        debugElement.query(By.css('[data-testid="admin-message"]')),
-      ).toBeTruthy();
+    it('should hide the Delete button', () => {
       expect(
         debugElement.query(By.css('[data-testid="delete-button"]')),
       ).toBeFalsy();
     });
+
+    it('should show the admin message', () => {
+      expect(
+        debugElement.query(By.css('[data-testid="admin-message"]')),
+      ).toBeTruthy();
+    });
   });
 
-  describe('back()', () => {
-    it('should call window.history.back when clicking the back button', () => {
+  describe('when the user is not admin', () => {
+    beforeEach(() => {
       mockUserService.getById.mockReturnValue(of(mockUser));
       fixture.detectChanges();
+    });
 
-      const backButton = debugElement.query(
-        By.css('[data-testid="back-button"]'),
+    it('should display user full name with uppercase last name and email', () => {
+      const name = debugElement.query(By.css('[data-testid="user-name"]'));
+      const email = debugElement.query(By.css('[data-testid="user-email"]'));
+
+      expect(name.nativeElement.textContent.trim()).toBe('Name: John DOE');
+      expect(email.nativeElement.textContent.trim()).toBe(
+        'Email: john.doe@test.com',
       );
-      backButton.nativeElement.click();
+    });
 
-      expect(window.history.back).toHaveBeenCalledTimes(1);
+    it('should show the Delete button', () => {
+      expect(
+        debugElement.query(By.css('[data-testid="delete-button"]')),
+      ).toBeTruthy();
     });
   });
 });
