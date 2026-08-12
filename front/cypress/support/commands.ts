@@ -8,6 +8,15 @@
 //     customCommand(param: any): typeof customCommand;
 //   }
 // }
+declare namespace Cypress {
+  interface Chainable<Subject = any> {
+    /**
+     * Select a HTML element with data-cy attribut
+     * @example cy.getByTestId('submit-btn')
+     */
+    getByTestId(id: string): Chainable<JQuery<HTMLElement>>;
+  }
+}
 //
 // function customCommand(param: any): void {
 //   console.warn(param);
@@ -29,6 +38,9 @@
 //
 // -- This is a parent command --
 // Cypress.Commands.add("login", (email, password) => { ... })
+Cypress.Commands.add('getByTestId', (id: string) => {
+  return cy.get(`[data-cy=${id}]`);
+});
 //
 //
 // -- This is a child command --

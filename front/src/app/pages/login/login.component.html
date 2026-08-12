@@ -6,7 +6,12 @@
     <form class="login-form" [formGroup]="form" (ngSubmit)="submit()">
       <mat-card-content fxLayout="column">
         <mat-form-field fxFlex>
-          <input matInput placeholder="Email" formControlName="email" />
+          <input
+            matInput
+            placeholder="Email"
+            formControlName="email"
+            data-cy="email-input"
+          />
         </mat-form-field>
         <mat-form-field fxFlex>
           <input
@@ -14,6 +19,7 @@
             [type]="hide ? 'password' : 'text'"
             placeholder="Password"
             formControlName="password"
+            data-cy="password-input"
           />
           <button
             mat-icon-button
@@ -32,6 +38,7 @@
           mat-raised-button
           color="primary"
           type="submit"
+          data-cy="login-submit"
           [disabled]="form.invalid"
         >
           Submit
