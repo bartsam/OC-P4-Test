@@ -10,7 +10,7 @@
             matInput
             placeholder="Email"
             formControlName="email"
-            data-cy="email-input"
+            data-testid="email-input"
           />
         </mat-form-field>
         <mat-form-field fxFlex>
@@ -19,7 +19,7 @@
             [type]="hide ? 'password' : 'text'"
             placeholder="Password"
             formControlName="password"
-            data-cy="password-input"
+            data-testid="password-input"
           />
           <button
             mat-icon-button
@@ -38,7 +38,7 @@
           mat-raised-button
           color="primary"
           type="submit"
-          data-cy="login-submit"
+          data-testid="submit-button"
           [disabled]="form.invalid"
         >
           Submit
