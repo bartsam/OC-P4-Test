@@ -32,7 +32,7 @@ export class LoginComponent {
 
   public form: FormGroup<LoginForm> = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.min(3)]],
+    password: ['', [Validators.required, Validators.minLength(3)]],
   });
 
   public submit(): void {

@@ -78,4 +78,14 @@ describe('LoginComponent Unit tests', () => {
     expect(component.form.valid).toBe(false);
     expect(component.form.controls.email.errors?.['email']).toBeTruthy();
   });
+
+  it('should be invalid if password length is less than 3 characters', () => {
+    component.form.setValue({
+      email: 'john.doe@test.com',
+      password: 'az',
+    });
+
+    expect(component.form.valid).toBe(false);
+    expect(component.form.controls.password.errors?.['minlength']).toBeTruthy();
+  });
 });
