@@ -8,15 +8,6 @@
 //     customCommand(param: any): typeof customCommand;
 //   }
 // }
-declare namespace Cypress {
-  interface Chainable<Subject = any> {
-    /**
-     * Select a HTML element with data-cy attribut
-     * @example cy.getByTestId('submit-btn')
-     */
-    getByTestId(id: string): Chainable<JQuery<HTMLElement>>;
-  }
-}
 //
 // function customCommand(param: any): void {
 //   console.warn(param);
@@ -38,9 +29,6 @@ declare namespace Cypress {
 //
 // -- This is a parent command --
 // Cypress.Commands.add("login", (email, password) => { ... })
-Cypress.Commands.add('getByTestId', (id: string) => {
-  return cy.get(`[data-testid=${id}]`);
-});
 //
 //
 // -- This is a child command --
@@ -53,3 +41,39 @@ Cypress.Commands.add('getByTestId', (id: string) => {
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+declare namespace Cypress {
+  interface Chainable<Subject = any> {
+    /**
+     * Select a HTML element with data-cy attribut
+     * @example cy.getByTestId('submit-btn')
+     */
+    getByTestId(id: string): Chainable<JQuery<HTMLElement>>;
+    /**
+     * Log in as an admin account (yoga@studio.com)
+     */
+    loginAsAdmin(): Chainable<void>;
+    /**
+     * Log in as user account (user@studio.com)
+     */
+    loginAsUser(): Chainable<void>;
+  }
+}
+
+Cypress.Commands.add('getByTestId', (id: string) => {
+  return cy.get(`[data-testid=${id}]`);
+});
+
+Cypress.Commands.add('loginAsAdmin', () => {
+  cy.visit('/login');
+  cy.getByTestId('email-input').type('yoga@studio.com');
+  cy.getByTestId('password-input').type('test!1234{enter}');
+  cy.url().should('include', '/sessions');
+});
+
+Cypress.Commands.add('loginAsUser', () => {
+  cy.visit('/login');
+  cy.getByTestId('email-input').type('user@studio.com');
+  cy.getByTestId('password-input').type('test!1234{enter}');
+  cy.url().should('include', '/sessions');
+});
