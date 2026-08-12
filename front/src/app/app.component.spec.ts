@@ -56,28 +56,28 @@ describe('AppComponent', () => {
 
     it('should show the Sessions, Account and Logout links', () => {
       expect(
-        debugElement.query(By.css('[data-testid="sessions-link"]')),
+        debugElement.query(By.css('[data-testid="sessions-button"]')),
       ).toBeTruthy();
       expect(
-        debugElement.query(By.css('[data-testid="account-link"]')),
+        debugElement.query(By.css('[data-testid="account-button"]')),
       ).toBeTruthy();
       expect(
-        debugElement.query(By.css('[data-testid="logout-link"]')),
+        debugElement.query(By.css('[data-testid="logout-button"]')),
       ).toBeTruthy();
     });
 
     it('should hide the Login and Register links', () => {
       expect(
-        debugElement.query(By.css('[data-testid="login-link"]')),
+        debugElement.query(By.css('[data-testid="login-button"]')),
       ).toBeFalsy();
       expect(
-        debugElement.query(By.css('[data-testid="register-link"]')),
+        debugElement.query(By.css('[data-testid="register-button"]')),
       ).toBeFalsy();
     });
 
     it('should log out the user and redirect to home when clicking Logout', () => {
       const logoutLink = debugElement.query(
-        By.css('[data-testid="logout-link"]'),
+        By.css('[data-testid="logout-button"]'),
       );
 
       logoutLink.nativeElement.click();
@@ -95,22 +95,22 @@ describe('AppComponent', () => {
 
     it('should show the Login and Register links', () => {
       expect(
-        debugElement.query(By.css('[data-testid="login-link"]')),
+        debugElement.query(By.css('[data-testid="login-button"]')),
       ).toBeTruthy();
       expect(
-        debugElement.query(By.css('[data-testid="register-link"]')),
+        debugElement.query(By.css('[data-testid="register-button"]')),
       ).toBeTruthy();
     });
 
     it('should hide the Sessions, Account and Logout links', () => {
       expect(
-        debugElement.query(By.css('[data-testid="sessions-link"]')),
+        debugElement.query(By.css('[data-testid="sessions-button"]')),
       ).toBeFalsy();
       expect(
-        debugElement.query(By.css('[data-testid="account-link"]')),
+        debugElement.query(By.css('[data-testid="account-button"]')),
       ).toBeFalsy();
       expect(
-        debugElement.query(By.css('[data-testid="logout-link"]')),
+        debugElement.query(By.css('[data-testid="logout-button"]')),
       ).toBeFalsy();
     });
   });

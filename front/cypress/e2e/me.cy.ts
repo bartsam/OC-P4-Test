@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 describe('Me spec', () => {
   it('should display user informations', () => {
     cy.loginAsAdmin();
-    cy.getByTestId('account-link').click();
+    cy.getByTestId('account-button').click();
     cy.url().should('include', '/me');
 
     cy.getByTestId('user-name').should('be.visible');
@@ -27,18 +27,18 @@ describe('Me spec', () => {
     cy.getByTestId('password-input').type(`${disposableUser.password}{enter}`);
     cy.url().should('include', '/sessions');
 
-    cy.getByTestId('account-link').click();
+    cy.getByTestId('account-button').click();
     cy.url().should('include', '/me');
 
     cy.getByTestId('delete-button').should('be.visible').click();
 
     cy.url().should('include', '/login');
-    cy.getByTestId('login-link').should('be.visible');
+    cy.getByTestId('login-button').should('be.visible');
   });
 
   it('should display delete button when user is not admin', () => {
     cy.loginAsUser();
-    cy.getByTestId('account-link').click();
+    cy.getByTestId('account-button').click();
     cy.url().should('include', '/me');
 
     cy.getByTestId('delete-button').should('be.visible');
@@ -46,7 +46,7 @@ describe('Me spec', () => {
 
   it('should navigate to the previous page when back button is clicked', () => {
     cy.loginAsUser();
-    cy.getByTestId('account-link').click();
+    cy.getByTestId('account-button').click();
     cy.url().should('include', '/me');
 
     cy.getByTestId('back-button').click();

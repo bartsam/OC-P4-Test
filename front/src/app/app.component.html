@@ -11,21 +11,21 @@
           routerLink="sessions"
           routerLinkActive="active"
           class="link"
-          data-testid="sessions-link"
+          data-testid="sessions-button"
           >Sessions</span
         >
         <span
           routerLink="me"
           routerLinkActive="active"
           class="link"
-          data-testid="account-link"
+          data-testid="account-button"
           >Account</span
         >
         <span
           (click)="logout()"
           routerLinkActive="active"
           class="link"
-          data-testid="logout-link"
+          data-testid="logout-button"
           >Logout</span
         >
       } @else {
@@ -33,14 +33,14 @@
           routerLink="/login"
           routerLinkActive="active"
           class="link"
-          data-testid="login-link"
+          data-testid="login-button"
           >Login</span
         >
         <span
           routerLink="/register"
           routerLinkActive="active"
           class="link"
-          data-testid="register-link"
+          data-testid="register-button"
           >Register</span
         >
       }
