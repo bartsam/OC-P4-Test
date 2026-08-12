@@ -41,7 +41,10 @@ describe('Login spec', () => {
   });
 
   it('should fail login with wrong credentials', () => {
-    cy.intercept('POST', '/api/auth/login').as('login');
+    cy.intercept('POST', '/api/auth/login', {
+      statusCode: 401,
+      body: { message: 'Unauthorized' },
+    }).as('login');
 
     cy.getByTestId('email-input').type('wrong@studio.com');
     cy.getByTestId('password-input').type('wrongPassword');
@@ -61,5 +64,15 @@ describe('Login spec', () => {
     cy.getByTestId('email-input').clear();
     cy.getByTestId('password-input').type('test!1234');
     cy.getByTestId('submit-button').should('be.disabled');
+  });
+
+  it('should toggle password visibility', () => {
+    cy.getByTestId('password-input').should('have.attr', 'type', 'password');
+
+    cy.getByTestId('password-button').click();
+    cy.getByTestId('password-input').should('have.attr', 'type', 'text');
+
+    cy.getByTestId('password-button').click();
+    cy.getByTestId('password-input').should('have.attr', 'type', 'password');
   });
 });
