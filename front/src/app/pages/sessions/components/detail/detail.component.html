@@ -4,7 +4,7 @@
       <mat-card-title>
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <div fxLayout="row" fxLayoutAlign="start center">
-            <button mat-icon-button (click)="back()">
+            <button mat-icon-button (click)="back()" data-testid="back-button">
               <mat-icon>arrow_back</mat-icon>
             </button>
             <h1>{{ session.name | titlecase }}</h1>

@@ -91,11 +91,24 @@ describe('DetailComponent Unit tests', () => {
     component = fixture.componentInstance;
     debugElement = fixture.debugElement;
     fixture.detectChanges();
+
+    jest.spyOn(window.history, 'back').mockImplementation(() => {});
   }
 
   it('should create the component', () => {
     createComponentWithSession(false, mockSession);
     expect(component).toBeTruthy();
+  });
+
+  it('should call window.history.back when clicking the back button', () => {
+    createComponentWithSession(false, mockSession);
+
+    const backButton = debugElement.query(
+      By.css('[data-testid="back-button"]'),
+    );
+    backButton.nativeElement.click();
+
+    expect(window.history.back).toHaveBeenCalledTimes(1);
   });
 
   it('should display Delete button and hide participation buttons when user is admin', () => {
