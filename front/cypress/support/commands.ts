@@ -39,7 +39,7 @@ declare namespace Cypress {
 // -- This is a parent command --
 // Cypress.Commands.add("login", (email, password) => { ... })
 Cypress.Commands.add('getByTestId', (id: string) => {
-  return cy.get(`[data-cy=${id}]`);
+  return cy.get(`[data-testid=${id}]`);
 });
 //
 //

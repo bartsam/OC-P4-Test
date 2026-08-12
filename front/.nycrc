@@ -1,6 +1,14 @@
 {
   "extends": "@istanbuljs/nyc-config-typescript",
   "all": true,
+  "check-coverage": true,
+  "lines": 80,
+  "statements": 80,
+  "functions": 80,
+  "branches": 80,
+  "include": [
+    "src/**/*.ts"
+  ],
   "exclude": [
     "./coverage/**",
     "cypress/**",
@@ -9,5 +17,10 @@
     "./src/main.ts",
     "./src/test.ts",
     "**/*.conf.js"
+  ],
+  "report-dir": "coverage/cypress",
+  "reporter": [
+    "html",
+    "text"
   ]
 }
