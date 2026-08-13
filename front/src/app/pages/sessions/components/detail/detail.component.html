@@ -7,7 +7,7 @@
             <button mat-icon-button (click)="back()" data-testid="back-button">
               <mat-icon>arrow_back</mat-icon>
             </button>
-            <h1>{{ session.name | titlecase }}</h1>
+            <h1 data-testid="session-title">{{ session.name | titlecase }}</h1>
           </div>
           <div>
             @if (isAdmin) {
@@ -76,7 +76,7 @@
             <span class="ml1">{{ session.date | date: "longDate" }}</span>
           </div>
         </div>
-        <div class="description">
+        <div class="description" data-testid="session-description">
           <p>Description:</p>
           {{ session.description }}
           <br />
