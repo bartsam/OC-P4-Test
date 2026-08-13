@@ -4,14 +4,19 @@
       <mat-card-title>
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <div fxLayout="row" fxLayoutAlign="start center">
-            <button mat-icon-button (click)="back()">
+            <button mat-icon-button (click)="back()" data-testid="back-button">
               <mat-icon>arrow_back</mat-icon>
             </button>
-            <h1>{{ session.name | titlecase }}</h1>
+            <h1 data-testid="session-title">{{ session.name | titlecase }}</h1>
           </div>
           <div>
             @if (isAdmin) {
-              <button mat-raised-button color="warn" (click)="delete()">
+              <button
+                mat-raised-button
+                color="warn"
+                (click)="delete()"
+                data-testid="delete-button"
+              >
                 <mat-icon>delete</mat-icon>
                 <span class="ml1">Delete</span>
               </button>
@@ -22,6 +27,7 @@
                     mat-raised-button
                     color="warn"
                     (click)="unParticipate()"
+                    data-testid="unparticipate-button"
                   >
                     <mat-icon>person_remove</mat-icon>
                     <span class="ml1">Do not participate</span>
@@ -31,6 +37,7 @@
                     mat-raised-button
                     color="primary"
                     (click)="participate()"
+                    data-testid="participate-button"
                   >
                     <mat-icon>person_add</mat-icon>
                     <span class="ml1">Participate</span>
@@ -69,7 +76,7 @@
             <span class="ml1">{{ session.date | date: "longDate" }}</span>
           </div>
         </div>
-        <div class="description">
+        <div class="description" data-testid="session-description">
           <p>Description:</p>
           {{ session.description }}
           <br />

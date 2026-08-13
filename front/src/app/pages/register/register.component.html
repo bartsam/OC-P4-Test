@@ -10,13 +10,24 @@
             matInput
             placeholder="First name"
             formControlName="firstName"
+            data-testid="firstName-input"
           />
         </mat-form-field>
         <mat-form-field fxFlex>
-          <input matInput placeholder="Last name" formControlName="lastName" />
+          <input
+            matInput
+            placeholder="Last name"
+            formControlName="lastName"
+            data-testid="lastName-input"
+          />
         </mat-form-field>
         <mat-form-field fxFlex>
-          <input matInput placeholder="Email" formControlName="email" />
+          <input
+            matInput
+            placeholder="Email"
+            formControlName="email"
+            data-testid="email-input"
+          />
         </mat-form-field>
         <mat-form-field fxFlex>
           <input
@@ -24,6 +35,7 @@
             [type]="hide ? 'password' : 'text'"
             placeholder="Password"
             formControlName="password"
+            data-testid="password-input"
           />
           <button
             mat-icon-button
@@ -32,6 +44,7 @@
             (click)="hide = !hide"
             [attr.aria-label]="'Hide password'"
             [attr.aria-pressed]="hide"
+            data-testid="password-button"
           >
             <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
           </button>
@@ -43,11 +56,14 @@
           color="primary"
           type="submit"
           [disabled]="form.invalid"
+          data-testid="submit-button"
         >
           Submit
         </button>
         @if (onError) {
-          <span class="error ml2">An error occurred</span>
+          <span class="error ml2" data-testid="error-message"
+            >An error occurred</span
+          >
         }
       </mat-card-actions>
     </form>

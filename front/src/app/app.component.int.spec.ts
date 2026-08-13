@@ -2,55 +2,67 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 
 import { expect, jest } from '@jest/globals';
-import { of } from 'rxjs';
 
+import { provideHttpClient } from '@angular/common/http';
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing';
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
+import { SessionInformation } from './core/models/sessionInformation.interface';
 import { SessionService } from './core/service/session.service';
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
   let app: AppComponent;
   let debugElement: DebugElement;
+  let httpTestingController: HttpTestingController;
+  let sessionService: SessionService;
   let router: Router;
 
-  const mockSessionService: jest.Mocked<
-    Pick<SessionService, '$isLogged' | 'logOut'>
-  > = {
-    $isLogged: jest.fn(),
-    logOut: jest.fn(),
+  const mockSessionInformation: SessionInformation = {
+    token: 'fake-jwt-token',
+    type: 'Bearer',
+    id: 1,
+    username: 'john.doe@example.com',
+    firstName: 'John',
+    lastName: 'Doe',
+    admin: true,
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         provideRouter([]),
-        { provide: SessionService, useValue: mockSessionService },
+        SessionService,
       ],
     }).compileComponents();
+
+    httpTestingController = TestBed.inject(HttpTestingController);
+    sessionService = TestBed.inject(SessionService);
+    router = TestBed.inject(Router);
+
+    jest.spyOn(router, 'navigate').mockResolvedValue(true);
 
     fixture = TestBed.createComponent(AppComponent);
     app = fixture.componentInstance;
     debugElement = fixture.debugElement;
-    router = TestBed.inject(Router);
-
-    // jest.spyOn : remplace la méthode navigate() du router par une fausse implémentation
-    jest.spyOn(router, 'navigate').mockResolvedValue(true);
   });
 
   afterEach(() => {
+    httpTestingController.verify();
+    sessionService.logOut();
     jest.clearAllMocks();
   });
 
-  it('should create the app', () => {
-    expect(app).toBeTruthy();
-  });
-
-  describe('when the user is logged in', () => {
+  describe('when the user is log in', () => {
     beforeEach(() => {
-      mockSessionService.$isLogged.mockReturnValue(of(true));
+      sessionService.logIn(mockSessionInformation);
       fixture.detectChanges();
     });
 
@@ -67,29 +79,35 @@ describe('AppComponent', () => {
     });
 
     it('should hide the Login and Register links', () => {
-      expect(
-        debugElement.query(By.css('[data-testid="login-button"]')),
-      ).toBeFalsy();
-      expect(
-        debugElement.query(By.css('[data-testid="register-button"]')),
-      ).toBeFalsy();
+      const loginLink = debugElement.query(
+        By.css('[data-testid="login-button"]'),
+      );
+      const registerLink = debugElement.query(
+        By.css('[data-testid="register-button"]'),
+      );
+      expect(loginLink).toBeFalsy();
+      expect(registerLink).toBeFalsy();
     });
 
     it('should log out the user and redirect to home when clicking Logout', () => {
-      const logoutLink = debugElement.query(
-        By.css('[data-testid="logout-button"]'),
-      );
+      debugElement
+        .query(By.css('[data-testid="logout-button"]'))
+        .nativeElement.click();
+      fixture.detectChanges();
 
-      logoutLink.nativeElement.click();
-
-      expect(mockSessionService.logOut).toHaveBeenCalledTimes(1);
+      expect(sessionService.isLogged).toBe(false);
       expect(router.navigate).toHaveBeenCalledWith(['']);
+      expect(
+        debugElement.query(By.css('[data-testid="logout-button"]')),
+      ).toBeFalsy();
+      expect(
+        debugElement.query(By.css('[data-testid="login-button"]')),
+      ).toBeTruthy();
     });
   });
 
   describe('when the user is logged out', () => {
     beforeEach(() => {
-      mockSessionService.$isLogged.mockReturnValue(of(false));
       fixture.detectChanges();
     });
 

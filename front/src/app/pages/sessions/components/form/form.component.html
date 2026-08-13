@@ -21,18 +21,28 @@
           fxLayout="column"
           [formGroup]="sessionForm"
           (ngSubmit)="submit()"
+          data-testid="session-form"
         >
           <mat-form-field appearance="outline" class="" fxFlex>
             <mat-label>Name</mat-label>
-            <input matInput formControlName="name" />
+            <input matInput formControlName="name" data-testid="name-input" />
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex>
             <mat-label>Date</mat-label>
-            <input matInput type="date" formControlName="date" />
+            <input
+              matInput
+              type="date"
+              formControlName="date"
+              data-testid="date-input"
+            />
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Teacher</mat-label>
-            <mat-select ngDefaultControl formControlName="teacher_id">
+            <mat-select
+              ngDefaultControl
+              formControlName="teacher_id"
+              data-testid="teacher-select"
+            >
               @for (teacher of teachers$ | async; track teacher.id) {
                 <mat-option [value]="teacher.id">
                   {{ teacher.firstName }} {{ teacher.lastName }}
@@ -46,6 +56,7 @@
               matInput
               rows="8"
               formControlName="description"
+              data-testid="description-input"
             ></textarea>
           </mat-form-field>
           <div fxLayout="row" fxLayoutAlign="center center">
@@ -53,6 +64,7 @@
               mat-raised-button
               color="primary"
               type="submit"
+              data-testid="submit-button"
               [disabled]="sessionForm.invalid"
             >
               Save

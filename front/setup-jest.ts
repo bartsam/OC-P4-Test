@@ -1,4 +1,5 @@
-import 'jest-preset-angular/setup-jest';
+import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
+setupZoneTestEnv();
 
 /* global mocks for jsdom */
 const mock = () => {
@@ -24,6 +25,12 @@ Object.defineProperty(document.body.style, 'transform', {
       configurable: true,
     };
   },
+});
+
+Object.defineProperty(window, 'getComputedStyle', {
+  value: () => ({
+    getPropertyValue: () => '',
+  }),
 });
 
 /* output shorter and more meaningful Zone error stack traces */
