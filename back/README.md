@@ -116,6 +116,12 @@ Dans l'onglet ```Exec```, il faut :
    - login: yoga@studio.com
    - password: test!1234
 
+4. Copier le contenu du fichier `ressources/sql/insert_teacher.sql` et l'exécuter dans l'invite de commande :
+
+    ```
+    INSERT INTO teachers (first_name, last_name) VALUES ('Teacher', 'TEST');
+    ```
+
 La capture d'écran ci-dessous résume les étapes précédentes :
 
 ![2-docker-desktop-bdd](pictures/2-docker-desktop-bdd.png)
