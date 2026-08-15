@@ -1,18 +1,13 @@
 package com.openclassrooms.starterjwt.controllers;
 
 import com.openclassrooms.starterjwt.dto.SessionDto;
+import com.openclassrooms.starterjwt.mapper.SessionMapper;
+import com.openclassrooms.starterjwt.models.Session;
 import com.openclassrooms.starterjwt.services.SessionService;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,41 +16,53 @@ import java.util.List;
 @Log4j2
 public class SessionController {
     private final SessionService sessionService;
+    private final SessionMapper sessionMapper;
 
 
-    public SessionController(SessionService sessionService) {
+    public SessionController(SessionService sessionService, SessionMapper sessionMapper) {
         this.sessionService = sessionService;
+        this.sessionMapper = sessionMapper;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SessionDto> findById(@PathVariable("id") String id) {
-         return ResponseEntity.ok().body(this.sessionService.getDtoById(Long.valueOf(id)));
+        Session session = sessionService.getById(Long.valueOf(id));
+        SessionDto response = sessionMapper.toDto(session);
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping()
     public ResponseEntity<List<SessionDto>> findAll() {
-        return ResponseEntity.ok().body(this.sessionService.findAllDto());
+        List<Session> sessions = sessionService.findAll();
+        List<SessionDto> response = sessionMapper.toDto(sessions);
+        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping()
     public ResponseEntity<SessionDto> create(@Valid @RequestBody SessionDto sessionDto) {
-        return ResponseEntity.ok().body(this.sessionService.create(sessionDto));
-    }
-
-    @PostMapping("{id}/participate/{userId}")
-    public ResponseEntity<Void> participate(@PathVariable("id") String id, @PathVariable("userId") String userId) {
-        this.sessionService.participate(Long.parseLong(id), Long.parseLong(userId));
-        return ResponseEntity.ok().build();
+        Session session = sessionMapper.toEntity(sessionDto);
+        Session created = sessionService.create(session);
+        SessionDto response = sessionMapper.toDto(created);
+        return ResponseEntity.ok().body(response);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<SessionDto> update(@PathVariable("id") String id, @Valid @RequestBody SessionDto sessionDto) {
-        return ResponseEntity.ok().body(this.sessionService.update(Long.valueOf(id), sessionDto));
+        Session session = sessionMapper.toEntity(sessionDto);
+        Session updated = sessionService.update(Long.valueOf(id), session);
+        SessionDto response = sessionMapper.toDto(updated);
+        return ResponseEntity.ok().body(response);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") String id) {
         this.sessionService.delete(Long.valueOf(id));
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("{id}/participate/{userId}")
+    public ResponseEntity<Void> participate(@PathVariable("id") String id, @PathVariable("userId") String userId) {
+        this.sessionService.participate(Long.parseLong(id), Long.parseLong(userId));
         return ResponseEntity.ok().build();
     }
 
