@@ -1,55 +1,40 @@
 import { faker } from '@faker-js/faker';
 
 describe('Session detail spec', () => {
-  const createdSessionIds: number[] = [];
-  let adminToken: string;
-
-  before(() => {
-    cy.request('POST', '/api/auth/login', {
-      email: 'yoga@studio.com',
-      password: 'test!1234',
-    }).then(({ body }) => {
-      console.log('Réponse login:', body);
-      adminToken = body.token;
-    });
-  });
-
-  afterEach(() => {
-    if (createdSessionIds.length === 0) return;
-
-    createdSessionIds.forEach((id) => {
-      cy.request({
-        method: 'DELETE',
-        url: `/api/session/${id}`,
-        headers: { Authorization: `Bearer ${adminToken}` },
-        failOnStatusCode: false,
-      });
-    });
-    createdSessionIds.length = 0;
-  });
-
-  const createSession = (overrides = {}) =>
+  const createTestSession = () =>
     cy
-      .request({
-        method: 'POST',
-        url: '/api/session',
-        headers: { Authorization: `Bearer ${adminToken}` },
-        body: {
-          name: faker.lorem.words(3),
-          date: faker.date.soon().toISOString(),
-          teacher_id: 1,
-          description: faker.lorem.sentence(10),
-          ...overrides,
-        },
+      .request('POST', '/api/auth/login', {
+        email: 'yoga@studio.com',
+        password: 'test!1234',
       })
-      .then(({ body: session }) => {
-        createdSessionIds.push(session.id);
-        return session;
-      });
+      .its('body.token')
+      .then((token) =>
+        cy
+          .request({
+            method: 'POST',
+            url: '/api/session',
+            headers: { Authorization: `Bearer ${token}` },
+            body: {
+              name: faker.lorem.words(3),
+              date: faker.date.soon().toISOString(),
+              teacher_id: 1,
+              description: faker.lorem.sentence(10),
+            },
+          })
+          .then(({ body: session }) => ({ session, token })),
+      );
+
+  const deleteTestSession = (id: number, token: string) =>
+    cy.request({
+      method: 'DELETE',
+      url: `/api/session/${id}`,
+      headers: { Authorization: `Bearer ${token}` },
+      failOnStatusCode: false,
+    });
 
   it('should display the session information correctly', () => {
-    createSession().then((session) => {
-      cy.loginAsAdmin();
+    createTestSession().then(({ session, token }) => {
+      cy.loginAsUser();
       cy.contains('[data-testid=session-card]', session.name).within(() => {
         cy.getByTestId('session-detail-button').click();
       });
@@ -59,11 +44,12 @@ describe('Session detail spec', () => {
       cy.getByTestId('session-description')
         .contains(session.description)
         .should('be.visible');
+      deleteTestSession(session.id, token);
     });
   });
 
   it('should display the delete button for an admin user', () => {
-    createSession().then((session) => {
+    createTestSession().then(({ session, token }) => {
       cy.loginAsAdmin();
       cy.contains('[data-testid=session-card]', session.name).within(() => {
         cy.getByTestId('session-detail-button').click();
@@ -72,11 +58,12 @@ describe('Session detail spec', () => {
       cy.getByTestId('delete-button').should('be.visible');
       cy.getByTestId('participate-button').should('not.exist');
       cy.getByTestId('unparticipate-button').should('not.exist');
+      deleteTestSession(session.id, token);
     });
   });
 
   it('should display the participate button if user is not admin', () => {
-    createSession().then((session) => {
+    createTestSession().then(({ session, token }) => {
       cy.loginAsUser();
       cy.contains('[data-testid=session-card]', session.name).within(() => {
         cy.getByTestId('session-detail-button').click();
@@ -84,11 +71,12 @@ describe('Session detail spec', () => {
 
       cy.getByTestId('participate-button').should('be.visible');
       cy.getByTestId('delete-button').should('not.exist');
+      deleteTestSession(session.id, token);
     });
   });
 
   it('should allow user to participate and unParticipate', () => {
-    createSession().then((session) => {
+    createTestSession().then(({ session, token }) => {
       cy.loginAsUser();
       cy.contains('[data-testid=session-card]', session.name).within(() => {
         cy.getByTestId('session-detail-button').click();
@@ -111,11 +99,12 @@ describe('Session detail spec', () => {
 
       cy.getByTestId('participate-button').should('be.visible');
       cy.contains('0 attendees').should('be.visible');
+      deleteTestSession(session.id, token);
     });
   });
 
   it('should delete the session when admin clicks delete', () => {
-    createSession().then((session) => {
+    createTestSession().then(({ session, token }) => {
       cy.loginAsAdmin();
       cy.contains('[data-testid=session-card]', session.name).within(() => {
         cy.getByTestId('session-detail-button').click();
@@ -127,14 +116,12 @@ describe('Session detail spec', () => {
       cy.wait('@delete').its('response.statusCode').should('eq', 200);
       cy.url().should('include', '/sessions');
       cy.url().should('not.include', '/detail');
-
-      // Le back a déjà supprimé cette session, inutile de la nettoyer nous-mêmes.
-      createdSessionIds.splice(createdSessionIds.indexOf(session.id), 1);
+      deleteTestSession(session.id, token);
     });
   });
 
   it('should navigate back to the previous page when click on back button', () => {
-    createSession().then((session) => {
+    createTestSession().then(({ session, token }) => {
       cy.loginAsAdmin();
       cy.contains('[data-testid=session-card]', session.name).within(() => {
         cy.getByTestId('session-detail-button').click();
@@ -143,6 +130,7 @@ describe('Session detail spec', () => {
       cy.getByTestId('back-button').click();
       cy.url().should('include', '/sessions');
       cy.url().should('not.include', '/detail');
+      deleteTestSession(session.id, token);
     });
   });
 });
