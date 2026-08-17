@@ -10,6 +10,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -56,11 +57,13 @@ public class TeacherControllerIntegrationTest {
             Teacher teacher = new Teacher();
             teacher.setFirstName("John");
             teacher.setLastName("Doe");
-            // WHEN
             Teacher saved = teacherRepository.save(teacher);
+            
+            // WHEN
+            ResultActions result = mockMvc.perform(get("/api/teacher/" + saved.getId()));
+
             // THEN
-            mockMvc.perform(get("/api/teacher/" + saved.getId()))
-                    .andExpect(status().isOk())
+            result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.firstName").value("John"));
         }
 
@@ -98,13 +101,14 @@ public class TeacherControllerIntegrationTest {
             teacherB.setFirstName("Jean");
             teacherB.setLastName("Biche");
 
-            // WHEN
             teacherRepository.save(teacherA);
             teacherRepository.save(teacherB);
 
+            // WHEN
+            ResultActions result = mockMvc.perform(get("/api/teacher"));
+
             //THEN
-            mockMvc.perform(get("/api/teacher"))
-                    .andExpect(status().isOk())
+            result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.length()").value(2))
                     .andExpect(jsonPath("$[0].firstName").value("John"))
                     .andExpect(jsonPath("$[1].firstName").value("Jean"));
