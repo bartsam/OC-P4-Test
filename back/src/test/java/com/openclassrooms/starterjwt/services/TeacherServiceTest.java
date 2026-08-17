@@ -1,7 +1,6 @@
 package com.openclassrooms.starterjwt.services;
 
 import com.openclassrooms.starterjwt.exception.NotFoundException;
-import com.openclassrooms.starterjwt.mapper.TeacherMapper;
 import com.openclassrooms.starterjwt.models.Teacher;
 import com.openclassrooms.starterjwt.repository.TeacherRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -27,8 +26,6 @@ public class TeacherServiceTest {
 
     @Mock
     private TeacherRepository teacherRepository;
-    @Mock
-    private TeacherMapper teacherMapper;
     @InjectMocks
     private TeacherService teacherService;
 
@@ -44,7 +41,7 @@ public class TeacherServiceTest {
         assertThat(result).hasSize(2);
         verify(teacherRepository, times(1)).findAll();
     }
-    
+
     @Nested
     @Tag("findById")
     @DisplayName("Find By Id")
