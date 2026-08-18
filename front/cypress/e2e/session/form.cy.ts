@@ -1,13 +1,18 @@
 import { faker } from '@faker-js/faker';
+import {
+  createTestSession,
+  deleteTestSession,
+} from '../../support/session.utils';
 
 describe('Session form spec', () => {
-  const getToken = (): Cypress.Chainable<string> =>
-    cy
-      .request('POST', '/api/auth/login', {
-        email: 'yoga@studio.com',
-        password: 'test!1234',
-      })
-      .its('body.token');
+  let createdSessionIds: number[] = [];
+
+  afterEach(() => {
+    createdSessionIds.forEach((id) => {
+      deleteTestSession(id);
+    });
+    createdSessionIds.length = 0;
+  });
 
   it('should redirect to /sessions if user not admin', () => {
     cy.visit('/sessions/create');
@@ -28,9 +33,9 @@ describe('Session form spec', () => {
   });
 
   it('should create a session successfully', () => {
+    cy.loginAsAdmin();
     cy.intercept('POST', '/api/session').as('create');
 
-    cy.loginAsAdmin();
     cy.getByTestId('session-create-button').click();
     cy.url().should('include', '/sessions/create');
 
@@ -45,17 +50,10 @@ describe('Session form spec', () => {
     cy.getByTestId('submit-button').click();
 
     cy.wait('@create').then(({ response }) => {
-      const createdId = response?.body?.id;
+      const createdSessionId = response?.body?.id;
 
-      if (createdId) {
-        getToken().then((token) => {
-          cy.request({
-            method: 'DELETE',
-            url: `/api/session/${createdId}`,
-            headers: { Authorization: `Bearer ${token}` },
-            failOnStatusCode: false,
-          });
-        });
+      if (createdSessionId) {
+        createdSessionIds.push(createdSessionId);
       }
 
       expect(response?.statusCode).to.eq(200);
@@ -64,47 +62,26 @@ describe('Session form spec', () => {
   });
 
   it('should update an existing session successfully', () => {
-    getToken().then((token) => {
-      cy.request({
-        method: 'POST',
-        url: '/api/session',
-        headers: { Authorization: `Bearer ${token}` },
-        body: {
-          name: 'Session à modifier',
-          date: faker.date.soon().toISOString(),
-          teacher_id: 1,
-          description: 'Description initiale',
-        },
-      }).then(({ body: session }) => {
-        cy.intercept('GET', `/api/session/${session.id}`).as(
-          'getSessionDetail',
-        );
-        cy.intercept('PUT', `/api/session/${session.id}`).as('updateSession');
+    cy.loginAsAdmin();
+    createTestSession().then((session) => {
+      createdSessionIds.push(session.id);
 
-        cy.loginAsAdmin();
+      cy.intercept('GET', `/api/session/${session.id}`).as('getSessionDetail');
+      cy.intercept('PUT', `/api/session/${session.id}`).as('updateSession');
 
-        cy.contains('[data-testid=session-card]', session.name).within(() => {
-          cy.getByTestId('session-edit-button').click();
-        });
+      cy.visit(`/sessions/update/${session.id}`);
 
-        cy.wait('@getSessionDetail');
-        cy.getByTestId('name-input').should('have.value', session.name);
+      cy.wait('@getSessionDetail');
+      cy.getByTestId('name-input').should('have.value', session.name);
 
-        cy.getByTestId('name-input').clear().type('Session modifiée');
-        cy.getByTestId('submit-button').click();
+      cy.getByTestId('name-input').clear().type('Session modifiée');
+      cy.getByTestId('submit-button').click();
 
-        cy.wait('@updateSession').then(({ response }) => {
-          cy.request({
-            method: 'DELETE',
-            url: `/api/session/${session.id}`,
-            headers: { Authorization: `Bearer ${token}` },
-            failOnStatusCode: false,
-          });
-          expect(response?.statusCode).to.eq(200);
-        });
-
-        cy.url().should('include', '/sessions');
+      cy.wait('@updateSession').then(({ response }) => {
+        expect(response?.statusCode).to.eq(200);
       });
+
+      cy.url().should('include', '/sessions');
     });
   });
 

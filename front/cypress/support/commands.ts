@@ -57,6 +57,10 @@ declare namespace Cypress {
      * Log in as user account (user@studio.com)
      */
     loginAsUser(): Chainable<void>;
+    /**
+     * Get session token
+     */
+    getSessionToken(): Chainable<void>;
   }
 }
 
@@ -65,15 +69,51 @@ Cypress.Commands.add('getByTestId', (id: string) => {
 });
 
 Cypress.Commands.add('loginAsAdmin', () => {
-  cy.visit('/login');
-  cy.getByTestId('email-input').type('yoga@studio.com');
-  cy.getByTestId('password-input').type('test!1234{enter}');
-  cy.url().should('include', '/sessions');
+  cy.session(
+    'adminSession',
+    () => {
+      cy.request('POST', '/api/auth/login', {
+        email: 'yoga@studio.com',
+        password: 'test!1234',
+      }).then(({ body }) => {
+        window.localStorage.setItem('sessionInformation', JSON.stringify(body));
+      });
+    },
+    {
+      validate() {
+        expect(localStorage.getItem('sessionInformation')).to.exist;
+      },
+    },
+  );
+  cy.visit('/sessions');
 });
 
 Cypress.Commands.add('loginAsUser', () => {
-  cy.visit('/login');
-  cy.getByTestId('email-input').type('user@studio.com');
-  cy.getByTestId('password-input').type('test!1234{enter}');
-  cy.url().should('include', '/sessions');
+  cy.session(
+    'userSession',
+    () => {
+      cy.request('POST', '/api/auth/login', {
+        email: 'user@studio.com',
+        password: 'test!1234',
+      }).then(({ body }) => {
+        window.localStorage.setItem('sessionInformation', JSON.stringify(body));
+      });
+    },
+    {
+      validate() {
+        expect(localStorage.getItem('sessionInformation')).to.exist;
+      },
+    },
+  );
+  cy.visit('/sessions');
+});
+
+Cypress.Commands.add('getSessionToken', () => {
+  return cy.window().then((win) => {
+    const session = win.localStorage.getItem('sessionInformation');
+    if (!session) {
+      throw new Error('Aucune session active dans le localStorage.');
+    }
+    return JSON.parse(session).token;
+  });
 });
