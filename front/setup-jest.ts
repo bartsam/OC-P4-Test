@@ -33,5 +33,9 @@ Object.defineProperty(window, 'getComputedStyle', {
   }),
 });
 
+afterEach(() => {
+  localStorage.clear();
+});
+
 /* output shorter and more meaningful Zone error stack traces */
 // Error.stackTraceLimit = 2;

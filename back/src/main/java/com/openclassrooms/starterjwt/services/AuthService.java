@@ -26,7 +26,8 @@ public class AuthService {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             throw new BadRequestException();
         }
-        User user = new User(signUpRequest.getEmail(),
+        User user = new User(
+                signUpRequest.getEmail(),
                 signUpRequest.getLastName(),
                 signUpRequest.getFirstName(),
                 passwordEncoder.encode(signUpRequest.getPassword()),

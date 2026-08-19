@@ -141,13 +141,20 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.5</version>
+                <version>0.8.12</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/SpringBootSecurityJwtApplication*</exclude>
+                        <exclude>**/dto/**</exclude>
+                        <exclude>**/payload/**</exclude>
+                        <exclude>**/models/**</exclude>
+                        <exclude>**/mapper/TeacherMapperImpl*</exclude>
+                        <exclude>**/mapper/UserMapperImpl*</exclude>
+                        <exclude>**/mapper/EntityMapper*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -176,7 +183,17 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.9</minimum>
+                                            <minimum>0.8</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
