@@ -44,8 +44,9 @@ mvn spring-boot:run
 
 5. Vérifier dans Docker Desktop qu'un conteneur `back_mysql` est bien démarré. Le backend est accessible sur
    `http://localhost:8080`.
-6. Insérer les données de démarrage (utilisateur admin, enseignant de test) en suivant la procédure détaillée dans
-   le [README du back](back/README.md#démarrage-du-back).
+6. Les données de démarrage (utilisateur admin `yoga@studio.com`, utilisateur standard `user@studio.com`
+   et enseignant de test) sont insérées automatiquement au démarrage via `back/src/main/resources/data.sql`. Pour se connecter
+   à la base de données et vérifier ces données, se référer au [README du back](back/README.md#démarrage-du-back).
 
 ### Front-end
 
