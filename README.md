@@ -11,8 +11,6 @@ d'un front-end **Angular**.
 - [Générer les rapports de couverture](#générer-les-rapports-de-couverture)
 - [Seuils de couverture](#seuils-de-couverture)
 
----
-
 ## Prérequis
 
 - JDK 21
@@ -20,8 +18,6 @@ d'un front-end **Angular**.
 - Docker Desktop et Docker Compose
 - Node.js et npm
 - Angular CLI
-
----
 
 ## Installer et lancer l'application
 
@@ -34,19 +30,15 @@ d'un front-end **Angular**.
 cd back
 ```
 
-3. Vérifier que le fichier `back/.env` contient les variables nécessaires à la connexion MySQL et au secret JWT
-   (`DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT` et `TOKEN_SECRET`).
-4. Démarrer l'application et initialiser automatiquement le conteneur Docker MySQL (via `compose.yaml`), en exécutant :
+3. Démarrer l'application et initialiser automatiquement le conteneur Docker MySQL (via `compose.yaml`), en exécutant :
 
 ```bash
 mvn spring-boot:run
 ```
 
-5. Vérifier dans Docker Desktop qu'un conteneur `back_mysql` est bien démarré. Le backend est accessible sur
-   `http://localhost:8080`.
-6. Les données de démarrage (utilisateur admin `yoga@studio.com`, utilisateur standard `user@studio.com`
-   et enseignant de test) sont insérées automatiquement au démarrage via `back/src/main/resources/data.sql`. Pour se connecter
-   à la base de données et vérifier ces données, se référer au [README du back](back/README.md#démarrage-du-back).
+4. Vérifier dans Docker Desktop qu'un conteneur `back_mysql` est bien démarré. Les données de démarrage (utilisateur admin `yoga@studio.com`, utilisateur standard
+   `user@studio.com` et enseignant de test) sont insérées automatiquement via `back/src/main/resources/data.sql` ;
+   pour se connecter à la base et vérifier ces données, se référer au [README du back](back/README.md#démarrage-du-back).
 
 ### Front-end
 
@@ -65,8 +57,6 @@ npm run start
 
 L'application est disponible sur `http://localhost:4200`.
 
----
-
 ## Lancer les tests
 
 ### Back-end : tests unitaires et d'intégration
@@ -80,7 +70,7 @@ Depuis le répertoire `/back` :
 mvn clean test
 ```
 
-### Front-end : tests unitaires
+### Front-end : tests unitaires et d'intégration
 
 Depuis le répertoire `/front` :
 
@@ -106,8 +96,6 @@ npm run cypress:open
 npm run cypress:run
 ```
 
----
-
 ## Générer les rapports de couverture
 
 ### Back-end : JaCoCo
@@ -116,11 +104,11 @@ npm run cypress:run
 mvn clean verify
 ```
 
-Cette commande génère le rapport de couverture (instructions, branches, lignes) et vérifie le
+Cette commande génère le rapport de couverture et vérifie le
 respect des seuils configurés (voir [Seuils de couverture](#seuils-de-couverture)) : le build échoue si un des seuils
 n'est pas atteint pour un package.
 
-Le rapport HTML est disponible sur : `back/target/site/jacoco/index.html`
+**Le rapport HTML est disponible sur : `back/target/site/jacoco/index.html`**
 
 **Exclusions de couverture** : les packages suivants sont exclus car ils ne contiennent pas de logique métier propre :
 
@@ -139,17 +127,23 @@ npm run cypress:run
 npm run e2e:coverage
 ```
 
-Le rapport est disponible sur : `front/coverage/cypress/lcov-report/index.html`
+Cette dernière commande génère le rapport de couverture et vérifie le
+respect des seuils configurés (voir [Seuils de couverture](#seuils-de-couverture)) : elle se
+termine en erreur si un des seuils globaux n'est pas atteint.
 
-### Front-end : couverture des tests unitaires
+**Le rapport est disponible sur : `front/coverage/cypress/lcov-report/index.html`**
+
+### Front-end : couverture des tests unitaires et d'intégration
 
 ```bash
 npm run test:coverage
 ```
 
-Le rapport HTML est disponible à : `front/coverage/jest/lcov-report/index.html`
+Cette commande génère le rapport de couverture et vérifie le
+respect des seuils configurés (voir [Seuils de couverture](#seuils-de-couverture)) : la commande se termine
+en erreur si un des seuils globaux n'est pas atteint.
 
----
+**Le rapport HTML est disponible à : `front/coverage/jest/lcov-report/index.html`**
 
 ## Seuils de couverture
 
